@@ -102,13 +102,14 @@ jobs:
                 FIELD_ID=$(echo "$PSYNC_FIELDS_JSON" | jq -r \
                   --arg name "$KEY" \
                   '.[] | select(.name == $name) | .id // empty' | head -1)
-                [ -z "$FIELD_ID" ] && echo "Warning: field '$KEY' not found, skipping." && continue
+                [ -z "$FIELD_ID" ] && echo "Warning: field '$KEY' not found in project fields. Available fields: $(echo "$PSYNC_FIELDS_JSON" | jq -r '[.[] | .name // empty] | join(", ")'). Skipping." && continue
                 DATA_TYPE=$(echo "$PSYNC_FIELDS_JSON" | jq -r \
                   --arg name "$KEY" \
                   '.[] | select(.name == $name) | .dataType // empty' | head -1)
                 OPTION_ID=$(echo "$PSYNC_FIELDS_JSON" | jq -r \
                   --arg name "$KEY" --arg val "$VALUE" \
                   '.[] | select(.name == $name) | .options[]? | select(.name == $val) | .id // empty')
+                echo "Debug: field='$KEY' value='$VALUE' field_id='$FIELD_ID' data_type='${DATA_TYPE:-single-select}' option_id='${OPTION_ID:-none}'"
                 if [ -n "$OPTION_ID" ]; then
                   gh api graphql -f query='
                     mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
