@@ -384,7 +384,7 @@ jobs:
 
           export PSYNC_PROJECT_ID="${{ steps.project.outputs.id }}"
           export PSYNC_FIELDS_JSON
-          export PSYNC_INITIAL_VALUES
+          export PSYNC_INITIAL_VALUES="$INITIAL_VALUES"
           export PSYNC_REPO="${{ github.repository }}"
 
           # shellcheck source=/dev/null
